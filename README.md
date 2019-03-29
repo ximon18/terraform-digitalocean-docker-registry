@@ -39,7 +39,7 @@ Note: _remember to replace \<placeholders\> with real values!_<br/>
 Note: _operations on the registry require that you be logged in first!_
 
 ### View the registry catalog in your browser
-Browse to https://<fqdn>/v2/_catalog
+Browse to https://\<fqdn\>/v2/_catalog
 
 ### Login to the registry
     docker login -u admin <fqdn>
