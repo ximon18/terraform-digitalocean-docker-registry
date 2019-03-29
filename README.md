@@ -21,7 +21,7 @@ Optionally you may also:
 - Install [wait-for-it](https://github.com/vishnubob/wait-for-it) in your PATH for demonstration of a post check that waits for the registry to be reachable after finishing deployment. Without this Terraform completes as soon as the Digital Ocean Droplet and DNS record have been created.
 
 ## Known issues
-1. This template does NOT yet demonstrate a load-balanced setup. if you wish to do so you should set the registry_HTTP_secret module input variable. For more information see: https://docs.docker.com/registry/#load-balancing-considerations.
+1. This template does NOT yet demonstrate a load-balanced setup. if you wish to do so you should set the `registry_http_secret` module input variable. For more information see: https://docs.docker.com/registry/#load-balancing-considerations.
 
 2. At the time of writing the module deploys v2.5.2 of the Docker Registry as the newer version suffers from a backend panic with Digital Ocean Spaces. For more information see: https://github.com/docker/distribution/issues/2695.
 
