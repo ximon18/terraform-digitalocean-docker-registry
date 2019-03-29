@@ -1,5 +1,5 @@
-# Terraform module to deploy a Docker private registry on Digital Ocean
-This template enables you to use [Terraform](https://terraform.io/) to deploy a [private v2 Docker registry](https://docs.docker.com/registry/) on a small [Digital Ocean](https://digitalocean.com/) Droplet (1 vCPU, 1 GiB RAM), with a [Lets Encrypt](https://letsencrypt.org/) TLS certificate and optional Digital Ocean Space storage of registry images. You might want to do this if your images contain sensitive information that should not be freely available to all at on [Docker Hub](https://hub.docker.com/) but you want the convenience of a registry over moving Docker images around manually.
+# Digital Ocean Docker private registry module
+Terraform module which creates a [private v2 Docker registry](https://docs.docker.com/registry/) on [Digital Ocean](https://digitalocean.com/).
 
 ## Disclaimers
 By using this module you accept the Lets Encrypt [Subscriber Agreement](https://letsencrypt.org/repository/)
@@ -10,37 +10,26 @@ The rights of law enforcement agencies to access data stored by Digital Ocean ma
 
 I take no responsibility for the security of your data or the choices you make concerning how you store it.
 
-## Requirements
-To use this module you will need to:
-- Create a Digital Ocean API token (see API -> Tokens/Keys in the Digital Ocean portal) and set it in the `DIGITALOCEAN_TOKEN` environment variable.
-- Add a parent domain that you own to Digital Ocean (see Networking -> Domains in the Digital Ocean portal).
-
-Optionally you may also:
-- Create an SSH public/private key pair (e.g. use `ssh-keygen`) for shell access to the Droplet on which the registry will run. The demo template defaults to using the file commonly stored in `~/.ssh/id_rsa.pub`.
-- Create a Digital Ocean Space for storing registry images (see Spaces in the Digital Ocean portal). If not specified the images will be stored with the registry Docker container on the Digital Ocean Droplet and will be lost if either the Docker container or the Droplet are lost.
-- Install [wait-for-it](https://github.com/vishnubob/wait-for-it) in your PATH for demonstration of a post check that waits for the registry to be reachable after finishing deployment. Without this Terraform completes as soon as the Digital Ocean Droplet and DNS record have been created.
-
-## Known issues
-1. This template does NOT yet demonstrate a load-balanced setup. if you wish to do so you should set the registry_HTTP_secret module input variable. For more information see: https://docs.docker.com/registry/#load-balancing-considerations.
-
-2. At the time of writing the module deploys v2.5.2 of the Docker Registry as the newer version suffers from a backend panic with Digital Ocean Spaces. For more information see: https://github.com/docker/distribution/issues/2695.
+## Features
+* [Lets Encrypt](https://letsencrypt.org/) TLS certificate.
+* Support for Digital Ocean Spaces as a storage backend for registry images.
 
 ## Usage
-Deploy with the usual Terraform recipe:
+```
+module "registry" {
+    source              = "https://github.com/ximon18/terraform-digitalocean-docker-registry"
+    ssh_key_fingerprint = "${digitalocean_ssh_key.somekey.fingerprint}"
+    admin_password      = "SoMeP@SsW0rd"
+    admin_email         = "your@email"
+    fqdn                = "myregistry.some.domain.managed.by.digitalocean"
+    region              = "digitalocean region e.g. ams3"
+}
+```
 
-    terraform init
-    terraform apply
+After deployment (and any DNS propagation delay) you can:
 
-*Tip:* Make your life easier by using a [`terraform.tfvars`](https://learn.hashicorp.com/terraform/getting-started/variables#assigning-variables) file.
-
-After deployment (and DNS propagation delay) you can:
-
-Note: _remember to replace \<placeholders\> with real values!_<br/>
-Note: _operations on the registry require that you be logged in first!_
-
-### View the registry catalog in your browser
+### View the registry catalog
 Browse to https://\<fqdn\>/v2/_catalog
-
 ### Login to the registry
     docker login -u admin <fqdn>
 ### View the list of images stored in the registry
@@ -51,26 +40,43 @@ Browse to https://\<fqdn\>/v2/_catalog
 ### Pull from the registry
     docker pull <repo>/<image>/<tag>
     docker pull <fqdn>/<repo>/<image>/<tag>
-    
+
+## Known issues
+- At the time of writing the module deploys v2.5.2 of the Docker Registry as the newer version suffers from a backend panic with Digital Ocean Spaces. For more information see: https://github.com/docker/distribution/issues/2695.
+
+- As this module uses the CertBot HTTP mechanism of proving domain ownership, it cannot be used to deploy the private registry on a domain name that is not accessible from the Lets Encrypt servers on the Internet.
+
+## Further reading
+See:
+- Input variables and output "documentation" attributes.
+- Comments in the module sources.
+
 # Links
 - https://docs.docker.com/registry/
-- https://www.digitalocean.com/community/tutorials/how-to-set-up-a-private-docker-registry-on-ubuntu-18-04
-- https://medium.com/@pcj/your-own-private-docker-repository-with-digitalocean-and-caddy-aug-26-2017-3e30859363ae
 
 # FAQ
+Q: Why do you require control of a domain name?
+
+A: To make it possible to obtain a TLS certificate from [Lets Encrypt](https://letsencrypt.org/). In my experience services using self-signed certificates, even when the self-signed nature of the certificate is okay, are a pain to use because tooling communicating with them either does not support self-signed certificates at all or requires configuration to work with them. If there is enough interest the module could be extended to support user-provided and/or self-signed TLS certificates instead which would remove the need for this requirement.
+
 Q: Why don't you use NGINX like [Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-private-docker-registry-on-ubuntu-18-04) and even [Docker themselves](https://docs.docker.com/registry/deploying/#more-advanced-authentication) suggest?
+
 A: I didn't want the additional complexity of a proxy in front of Docker, both for configuration, operation and when diagnosing issues, and Basic Authentication within TLS was good enough for my use case.
 
 Q: Why don't you use the Docker out-of-the-box support for Lets Encrypt?
+
 A: It's broken since [issue 2545](https://github.com/docker/distribution/issues/2545)
 
 Q: Why don't you use Caddy like [Paul Cody suggests](https://medium.com/@pcj/your-own-private-docker-repository-with-digitalocean-and-caddy-aug-26-2017-3e30859363ae)?
+
 A: I didn't want the additional complexity (see above), and I experienced authentication issues when using Caddy, but it's possible that I had just made some other mistake in my testing at that point as others report no issues using Caddy in front of a Docker registry.
 
 Q: Why don't you use the [Digital Ocean DNS plugin for CertBot](https://certbot-dns-digitalocean.readthedocs.io/en/stable/)?
-A: I didn't want the additional complexity, and I didn't want to store my Digital Ocean API credentials on the registry Droplet.
+
+A: I didn't want the additional complexity, and I didn't want to store my Digital Ocean API credentials on the registry Droplet. It could however be a way to enable deployment on private domains while still using Lets Encrypt.
 
 Q: Why did you spend the time creating this? Didn't you see that XXX has already done this?
+
 A: Partly as a learning exercise about Terraform. Despire some Googling I may have course missed something on the vast web so no I didn't see XXX and I would love to hear about any other solutions out there that I may have missed.
 
 END
