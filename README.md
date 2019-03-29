@@ -70,4 +70,7 @@ A: I didn't want the additional complexity (see above), and I experienced authen
 Q: Why don't you use the [Digital Ocean DNS plugin for CertBot](https://certbot-dns-digitalocean.readthedocs.io/en/stable/)?
 A: I didn't want the additional complexity, and I didn't want to store my Digital Ocean API credentials on the registry Droplet.
 
+Q: Why did you spend the time creating this? Didn't you see that XXX has already done this?
+A: Partly as a learning exercise about Terraform. Despire some Googling I may have course missed something on the vast web so no I didn't see XXX and I would love to hear about any other solutions out there that I may have missed.
+
 END
