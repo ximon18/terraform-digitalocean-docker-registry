@@ -27,6 +27,6 @@ Deploy with the usual Terraform recipe:
 
 *Tip:* Make your life easier by using a [`terraform.tfvars`](https://learn.hashicorp.com/terraform/getting-started/variables#assigning-variables) file.
 
-See the module README.md for more information.
+See the module [README.md](../../README.md) for more information.
     
 END
