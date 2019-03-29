@@ -64,7 +64,7 @@ A: I didn't want the additional complexity of a proxy in front of Docker, both f
 
 Q: Why don't you use the Docker out-of-the-box support for Lets Encrypt?
 
-A: It's broken since [issue 2545](https://github.com/docker/distribution/issues/2545)
+A: It's been broken since [issue 2545](https://github.com/docker/distribution/issues/2545).
 
 Q: Why don't you use Caddy like [Paul Cody suggests](https://medium.com/@pcj/your-own-private-docker-repository-with-digitalocean-and-caddy-aug-26-2017-3e30859363ae)?
 
