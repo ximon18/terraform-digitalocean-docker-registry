@@ -2,6 +2,8 @@
 Terraform module which creates a [private v2 Docker registry](https://docs.docker.com/registry/) on [Digital Ocean](https://digitalocean.com/).
 
 ## Disclaimers
+I have not hardened the registry for production use - use at your own risk!
+
 By using this module you accept the Lets Encrypt [Subscriber Agreement](https://letsencrypt.org/repository/)
 
 This module does NOT encrypt the image storage and thus you are still dependent on the configured Digital Ocean access controls and on Digital Ocean data protection policy.
@@ -51,6 +53,15 @@ See:
 - Input variables and output "documentation" attributes.
 - Comments in the module sources.
 
+### Managing user access rights to the registry
+Access is controlled by entries in an `/etc/registry/auth/htpasswd` file stored on the Digital Ocean Droplet. You can revoke access by deleting lines from the file. You can grant access to new users by executing a command like this on the Droplet when connected via SSH:
+
+  	docker run --entrypoint htpasswd registry:2 -Bbn <username> "<password>" > /etc/registry/auth/htpasswd
+
+And then because the registry [only reads the `htpasswd` file on startup](https://docs.docker.com/registry/configuration/#htpasswd) you'll need to restart the registry:
+
+    docker restart registry
+    
 # Links
 - https://docs.docker.com/registry/
 
@@ -65,7 +76,7 @@ A: I didn't want the additional complexity of a proxy in front of Docker, both f
 
 Q: Why don't you use the Docker out-of-the-box support for Lets Encrypt?
 
-A: It's broken since [issue 2545](https://github.com/docker/distribution/issues/2545)
+A: It's been broken since [issue 2545](https://github.com/docker/distribution/issues/2545).
 
 Q: Why don't you use Caddy like [Paul Cody suggests](https://medium.com/@pcj/your-own-private-docker-repository-with-digitalocean-and-caddy-aug-26-2017-3e30859363ae)?
 
