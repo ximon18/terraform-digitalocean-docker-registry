@@ -2,6 +2,8 @@
 This template enables you to use [Terraform](https://terraform.io/) to deploy a [private v2 Docker registry](https://docs.docker.com/registry/) on a small [Digital Ocean](https://digitalocean.com/) Droplet (1 vCPU, 1 GiB RAM), with a [Lets Encrypt](https://letsencrypt.org/) TLS certificate and optional Digital Ocean Space storage of registry images. You might want to do this if your images contain sensitive information that should not be freely available to all at on [Docker Hub](https://hub.docker.com/) but you want the convenience of a registry over moving Docker images around manually.
 
 ## Disclaimers
+I have not hardened the registry for production use - use at your own risk!
+
 By using this module you accept the Lets Encrypt [Subscriber Agreement](https://letsencrypt.org/repository/)
 
 This module does NOT encrypt the image storage and thus you are still dependent on the configured Digital Ocean access controls and on Digital Ocean data protection policy.
@@ -33,6 +35,8 @@ Deploy with the usual Terraform recipe:
 
 *Tip:* Make your life easier by using a [`terraform.tfvars`](https://learn.hashicorp.com/terraform/getting-started/variables#assigning-variables) file.
 
+*Tip:* The demo Terraform template outputs some handy SSH commands you can use to connect to the registry Droplet via SSH to diagnose problems and administer the VM/registry as needed.
+
 After deployment (and DNS propagation delay) you can:
 
 Note: _remember to replace \<placeholders\> with real values!_<br/>
@@ -51,6 +55,14 @@ Browse to https://\<fqdn\>/v2/_catalog
 ### Pull from the registry
     docker pull <repo>/<image>/<tag>
     docker pull <fqdn>/<repo>/<image>/<tag>
+### Manage user access rights to the registry
+Access is controlled by entries in an `/etc/registry/auth/htpasswd` file stored on the Digital Ocean Droplet. You can revoke access by deleting lines from the file. You can grant access to new users by executing a command like this on the Droplet when connected via SSH:
+
+  	docker run --entrypoint htpasswd registry:2 -Bbn <username> "<password>" > /etc/registry/auth/htpasswd
+
+And then because the registry [only reads the `htpasswd` file on startup](https://docs.docker.com/registry/configuration/#htpasswd) you'll need to restart the registry:
+
+    docker restart registry
     
 # Links
 - https://docs.docker.com/registry/
