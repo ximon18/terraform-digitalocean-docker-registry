@@ -42,6 +42,14 @@ Browse to https://\<fqdn\>/v2/_catalog
 ### Pull from the registry
     docker pull <repo>/<image>/<tag>
     docker pull <fqdn>/<repo>/<image>/<tag>
+### Managing user access rights to the registry
+Access is controlled by entries in an `/etc/registry/auth/htpasswd` file stored on the Digital Ocean Droplet. You can revoke access by deleting lines from the file. You can grant access to new users by executing a command like this on the Droplet when connected via SSH:
+
+  	docker run --entrypoint htpasswd registry:2 -Bbn <username> "<password>" > /etc/registry/auth/htpasswd
+
+And then because the registry [only reads the `htpasswd` file on startup](https://docs.docker.com/registry/configuration/#htpasswd) you'll need to restart the registry:
+
+    docker restart registry
 
 ## Known issues
 - At the time of writing the module deploys v2.5.2 of the Docker Registry as the newer version suffers from a backend panic with Digital Ocean Spaces. For more information see: https://github.com/docker/distribution/issues/2695.
@@ -52,16 +60,7 @@ Browse to https://\<fqdn\>/v2/_catalog
 See:
 - Input variables and output "documentation" attributes.
 - Comments in the module sources.
-
-### Managing user access rights to the registry
-Access is controlled by entries in an `/etc/registry/auth/htpasswd` file stored on the Digital Ocean Droplet. You can revoke access by deleting lines from the file. You can grant access to new users by executing a command like this on the Droplet when connected via SSH:
-
-  	docker run --entrypoint htpasswd registry:2 -Bbn <username> "<password>" > /etc/registry/auth/htpasswd
-
-And then because the registry [only reads the `htpasswd` file on startup](https://docs.docker.com/registry/configuration/#htpasswd) you'll need to restart the registry:
-
-    docker restart registry
-    
+   
 # Links
 - https://docs.docker.com/registry/
 
