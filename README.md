@@ -51,5 +51,23 @@ Browse to https://<fqdn>/v2/_catalog
 ### Pull from the registry
     docker pull <repo>/<image>/<tag>
     docker pull <fqdn>/<repo>/<image>/<tag>
+    
+# Links
+- https://docs.docker.com/registry/
+- https://www.digitalocean.com/community/tutorials/how-to-set-up-a-private-docker-registry-on-ubuntu-18-04
+- https://medium.com/@pcj/your-own-private-docker-repository-with-digitalocean-and-caddy-aug-26-2017-3e30859363ae
+
+# FAQ
+Q: Why don't you use NGINX like [Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-private-docker-registry-on-ubuntu-18-04) and even [Docker themselves](https://docs.docker.com/registry/deploying/#more-advanced-authentication) suggest?
+A: I didn't want the additional complexity of a proxy in front of Docker, both for configuration, operation and when diagnosing issues, and Basic Authentication within TLS was good enough for my use case.
+
+Q: Why don't you use the Docker out-of-the-box support for Lets Encrypt?
+A: It's broken since [issue 2545](https://github.com/docker/distribution/issues/2545)
+
+Q: Why don't you use Caddy like [Paul Cody suggests](https://medium.com/@pcj/your-own-private-docker-repository-with-digitalocean-and-caddy-aug-26-2017-3e30859363ae)?
+A: I didn't want the additional complexity (see above), and I experienced authentication issues when using Caddy, but it's possible that I had just made some other mistake in my testing at that point as others report no issues using Caddy in front of a Docker registry.
+
+Q: Why don't you use the [Digital Ocean DNS plugin for CertBot](https://certbot-dns-digitalocean.readthedocs.io/en/stable/)?
+A: I didn't want the additional complexity, and I didn't want to store my Digital Ocean API credentials on the registry Droplet.
 
 END
