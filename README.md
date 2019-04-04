@@ -1,5 +1,5 @@
 # Digital Ocean Docker private registry module
-Terraform module which creates a [private v2 Docker registry](https://docs.docker.com/registry/) on [Digital Ocean](https://digitalocean.com/).
+[Terraform module](https://registry.terraform.io/modules/ximon18/docker-registry/digitalocean/) which creates a [private v2 Docker registry](https://docs.docker.com/registry/) on [Digital Ocean](https://digitalocean.com/).
 
 ## Disclaimers
 I have not hardened the registry for production use - use at your own risk!
