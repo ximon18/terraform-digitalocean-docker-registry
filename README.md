@@ -89,4 +89,15 @@ Q: Why did you spend the time creating this? Didn't you see that XXX has already
 
 A: Partly as a learning exercise about Terraform. Despire some Googling I may have course missed something on the vast web so no I didn't see XXX and I would love to hear about any other solutions out there that I may have missed.
 
+Q: How do I delete images?
+
+A: Either by making [REST API](https://docs.docker.com/registry/spec/api/#deleting-an-image) calls manually or more easily by using the wonderful [Docker registry v2 command line client](https://github.com/genuinetools/reg) with command `reg rm -u <user> -p <pass> <registryfqdn>/<repo>/<image>:<tag>. *Note:* You will need at least v0.0.1-beta of the Terraform template and have redeployed using `terraform apply`, otherwise your registry will not reject delete commands with HTTP 405.
+
+Q: How do I cleanup space still used by deleted images?
+
+A: SSH to the Docker Droplet as user root, then issue the following command:
+```
+docker exec -it registry bin/registry garbage-collect /etc/docker/registry//config.yml
+```
+
 END
