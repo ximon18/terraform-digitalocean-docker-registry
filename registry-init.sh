@@ -11,8 +11,8 @@
 #
 # Optional:
 # - Environment Variables: 
-#     REGISTRY_S3_CHECK_HEALTH - MUST be "false" if using Digital Ocean spaces
-#     REGISTRY_S3_ENCRYPT      - MUST be "false" if using Digital Ocean spaces
+#     REGISTRY_S3_CHECK_HEALTH - MUST be "false" if using DigitalOcean spaces
+#     REGISTRY_S3_ENCRYPT      - MUST be "false" if using DigitalOcean spaces
 #     REGISTRY_S3_ACCESSKEY    - 
 #     REGISTRY_S3_SECRETKEY    - 
 #     REGISTRY_S3_BUCKET       - e.g. "my-bucket"
@@ -48,7 +48,7 @@ abort_missing_var() {
 set -o nounset
 
 # See: https://github.com/docker/distribution/issues/2695 "Registry 2.6.2 with s3 backend panic: runtime error: invalid
-# memory address or nil pointer dereference" - I encountered the same issue when using Digital Ocean spaces as the S3
+# memory address or nil pointer dereference" - I encountered the same issue when using DigitalOcean spaces as the S3
 # backend with the "latest" 2.x version of the registry available at the time. Downgrading to v2.5.2 solves the problem.
 DOCKER_REGISTRY_VERSION=2.5.2
 ETC_REGISTRY=/etc/registry
